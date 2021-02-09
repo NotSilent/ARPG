@@ -3,16 +3,37 @@
 
 #include "TopDownPlayerController.h"
 
-
+#include "AIController.h"
 #include "DrawDebugHelpers.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+
+ATopDownPlayerController::ATopDownPlayerController()
+{
+	AcceptanceRadius = 0.5f;
+}
 
 void ATopDownPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("LMB", IE_Pressed, this, &ATopDownPlayerController::OnLeftMouseButtonClicked);
+}
+
+void ATopDownPlayerController::BeginPlay()
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	APlayerCharacter* PlayerCharacter = GetWorld()->SpawnActor<APlayerCharacter>(
+		PlayerCharacterClass, FVector(0.0f, 0.0f, 112.0f), FRotator::ZeroRotator, SpawnParams);
+
+	if (PlayerCharacter)
+	{
+		PlayerAIController = PlayerCharacter->GetAIController();
+	}
+
+	SetViewTarget(PlayerCharacter);
 }
 
 
@@ -30,7 +51,10 @@ void ATopDownPlayerController::OnLeftMouseButtonClicked()
 
 			if (Distance > 100.0f)
 			{
-				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, Hit.ImpactPoint);
+				if (PlayerAIController)
+				{
+					PlayerAIController->Move(Hit.ImpactPoint, AcceptanceRadius);
+				}
 
 				DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 5.0f, 8, FColor::Red, false, 5.0f, 0, 1.0f);
 			}

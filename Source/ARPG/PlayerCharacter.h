@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 
 
+
+#include "PlayerAIController.h"
 #include "GameFramework/Character.h"
 
 #include "PlayerCharacter.generated.h"
@@ -21,12 +23,14 @@ class ARPG_API APlayerCharacter : public ACharacter
 
 public:
 	APlayerCharacter();
+	
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaTime) override;
+	APlayerAIController* GetAIController() const;
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)

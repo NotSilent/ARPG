@@ -45,6 +45,13 @@ void APlayerCharacter::BeginPlay()
 	{
 		HealthComp->OnHealthReachedZero.AddDynamic(this, &APlayerCharacter::OnDead);
 	}
+
+	SpawnDefaultController();
+}
+
+APlayerAIController* APlayerCharacter::GetAIController() const
+{
+	return Cast<APlayerAIController>(Controller);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
