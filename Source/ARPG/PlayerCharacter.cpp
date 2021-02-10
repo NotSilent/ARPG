@@ -37,14 +37,18 @@ void APlayerCharacter::BeginPlay()
 		                                             FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
 	}
 
-	AnimInstance = GetMesh()->GetAnimInstance();
-
 	PreviousLocation = GetActorLocation();
 
 	HealthComp = FindComponentByClass<UHealthComponent>();
 	if (HealthComp)
 	{
 		HealthComp->OnHealthReachedZero.AddDynamic(this, &APlayerCharacter::OnDead);
+	}
+
+	PlayerAnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (PlayerAnimInstance)
+	{
+		PlayerAnimInstance->OnStartCast.AddDynamic(this, &APlayerCharacter::CastSpell);
 	}
 
 	SpawnDefaultController();
@@ -76,7 +80,7 @@ void APlayerCharacter::InitSpell(AController* Creator, const FVector& Destinatio
 	NewRotation.Pitch = 0.0f;
 	SetActorRotation(NewRotation);
 
-	StartCastAnimation();
+	PlayerAnimInstance->StartCasting();
 }
 
 void APlayerCharacter::SpawnProjectile(AController* Creator, const FVector& Destination)
@@ -106,15 +110,15 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (AnimInstance)
+	if (PlayerAnimInstance)
 	{
 		if (FMath::IsNearlyZero(FVector::Distance(PreviousLocation, GetActorLocation())))
 		{
-			SetSpeed(0.0f);
+			PlayerAnimInstance->SetSpeed(0.0f);
 		}
 		else
 		{
-			SetSpeed(1.0f);
+			PlayerAnimInstance->SetSpeed(1.0f);
 
 			const FVector TargetForward = GetActorLocation() - PreviousLocation;
 

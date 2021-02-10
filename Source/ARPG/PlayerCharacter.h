@@ -6,6 +6,7 @@
 
 
 #include "PlayerAIController.h"
+#include "PlayerAnimInstance.h"
 #include "Projectile.h"
 #include "GameFramework/Character.h"
 
@@ -39,19 +40,6 @@ public:
 
 	void SpawnProjectile(AController* Creator, const FVector& Destination);
 
-protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
-	UAnimInstance* AnimInstance;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void SetSpeed(float Value);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void SetTurnAngle(float Value);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void StartCastAnimation();
-
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectile> ProjectileClass;
@@ -67,6 +55,9 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	UHealthComponent* HealthComp;
+
+	UPROPERTY(VisibleInstanceOnly)
+	UPlayerAnimInstance* PlayerAnimInstance;
 
 	UPROPERTY(VisibleInstanceOnly)
 	FVector PreviousLocation;
