@@ -32,8 +32,15 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	APlayerAIController* PlayerAIController;
 
+	UPROPERTY(VisibleInstanceOnly)
+	APlayerCharacter* PlayerCharacter;
+
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float AcceptanceRadius;
 
+	UFUNCTION()
 	void OnLeftMouseButtonClicked();
+
+	UFUNCTION()
+	void OnRightMouseButtonClicked();
 };

@@ -23,11 +23,24 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	void Init(const FVector& Direction);
+
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnCollided(AActor* OtherActor);
+	void OnCollided(FVector Origin);
 
 private:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
+	AController* InstanceCreator;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	float Speed;
+
+	UPROPERTY(VisibleInstanceOnly)
+	FVector MovementDirection;
 };

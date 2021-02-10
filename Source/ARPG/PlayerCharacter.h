@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 
 
-
 #include "PlayerAIController.h"
+#include "Projectile.h"
 #include "GameFramework/Character.h"
 
 #include "PlayerCharacter.generated.h"
@@ -23,7 +23,7 @@ class ARPG_API APlayerCharacter : public ACharacter
 
 public:
 	APlayerCharacter();
-	
+
 	virtual void Tick(float DeltaTime) override;
 
 protected:
@@ -31,6 +31,13 @@ protected:
 
 public:
 	APlayerAIController* GetAIController() const;
+
+	UFUNCTION(BlueprintCallable)
+	void CastSpell();
+
+	void InitSpell(AController* Creator, const FVector& Destination);
+
+	void SpawnProjectile(AController* Creator, const FVector& Destination);
 
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
@@ -42,7 +49,13 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetTurnAngle(float Value);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartCastAnimation();
+
 private:
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AProjectile> ProjectileClass;
+
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
 
@@ -58,6 +71,14 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	FVector PreviousLocation;
 
+	UPROPERTY(VisibleInstanceOnly)
+	FVector DestinationOfNextSpell;
+
+	UPROPERTY(VisibleInstanceOnly)
+	AController* CreatorOfNextSpell;
+
+
+	UFUNCTION()
 	void OnDead();
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,

@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Niagara/Public/NiagaraComponent.h"
 #include "Niagara/Public/NiagaraFunctionLibrary.h"
+#include "PlayerAIController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -54,6 +55,53 @@ APlayerAIController* APlayerCharacter::GetAIController() const
 	return Cast<APlayerAIController>(Controller);
 }
 
+void APlayerCharacter::CastSpell()
+{
+	SpawnProjectile(CreatorOfNextSpell, DestinationOfNextSpell);
+}
+
+void APlayerCharacter::InitSpell(AController* Creator, const FVector& Destination)
+{
+	CreatorOfNextSpell = Creator;
+	DestinationOfNextSpell = Destination;
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	const FName SocketName = TEXT("RightHandSocket");
+	const FVector SocketLocation = MeshComp->GetSocketLocation(SocketName);
+
+	const FVector Direction = Destination - SocketLocation;
+
+	FRotator NewRotation = Direction.Rotation();
+	NewRotation.Roll = 0.0f;
+	NewRotation.Pitch = 0.0f;
+	SetActorRotation(NewRotation);
+
+	StartCastAnimation();
+}
+
+void APlayerCharacter::SpawnProjectile(AController* Creator, const FVector& Destination)
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+	SpawnParams.Owner = this;
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	const FName SocketName = TEXT("RightHandSocket");
+	const FVector SocketLocation = MeshComp->GetSocketLocation(SocketName);
+
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SocketLocation,
+	                                                              FRotator::ZeroRotator, SpawnParams);
+
+	FVector Direction = Destination - SocketLocation;
+
+	if (Projectile)
+	{
+		Direction.Normalize();
+		Projectile->Init(Direction);
+	}
+}
+
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -67,8 +115,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 		else
 		{
 			SetSpeed(1.0f);
-
-			//TODO: Rewrite UAIBlueprintHelperLibrary::SimpleMoveToLocation to store current target and turn it's way
 
 			const FVector TargetForward = GetActorLocation() - PreviousLocation;
 

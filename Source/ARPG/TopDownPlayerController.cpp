@@ -18,6 +18,7 @@ void ATopDownPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction("LMB", IE_Pressed, this, &ATopDownPlayerController::OnLeftMouseButtonClicked);
+	InputComponent->BindAction("RMB", IE_Pressed, this, &ATopDownPlayerController::OnRightMouseButtonClicked);
 }
 
 void ATopDownPlayerController::BeginPlay()
@@ -25,7 +26,7 @@ void ATopDownPlayerController::BeginPlay()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	APlayerCharacter* PlayerCharacter = GetWorld()->SpawnActor<APlayerCharacter>(
+	PlayerCharacter = GetWorld()->SpawnActor<APlayerCharacter>(
 		PlayerCharacterClass, FVector(0.0f, 0.0f, 112.0f), FRotator::ZeroRotator, SpawnParams);
 
 	if (PlayerCharacter)
@@ -44,7 +45,7 @@ void ATopDownPlayerController::OnLeftMouseButtonClicked()
 
 	if (Hit.bBlockingHit)
 	{
-		APawn* const MyPawn = GetPawn();
+		APawn* const MyPawn = PlayerAIController->GetPawn();
 		if (MyPawn)
 		{
 			float const Distance = FVector::Dist(Hit.ImpactPoint, MyPawn->GetActorLocation());
@@ -59,5 +60,16 @@ void ATopDownPlayerController::OnLeftMouseButtonClicked()
 				DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 5.0f, 8, FColor::Red, false, 5.0f, 0, 1.0f);
 			}
 		}
+	}
+}
+
+void ATopDownPlayerController::OnRightMouseButtonClicked()
+{
+	FHitResult Hit;
+	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+	if (Hit.bBlockingHit)
+	{
+		PlayerCharacter->InitSpell(this, Hit.ImpactPoint);
 	}
 }
