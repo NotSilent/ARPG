@@ -11,7 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartCast);
 /**
  * 
  */
-UCLASS(transient, Blueprintable, hideCategories=AnimInstance, BlueprintType)
+UCLASS()
 class ARPG_API UPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()

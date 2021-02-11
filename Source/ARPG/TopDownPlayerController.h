@@ -15,32 +15,38 @@
 UCLASS()
 class ARPG_API ATopDownPlayerController : public APlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public :
-	ATopDownPlayerController();
+    ATopDownPlayerController();
 
-	virtual void SetupInputComponent() override;
+    virtual void Tick(float DeltaTime) override;
+
+    virtual void SetupInputComponent() override;
 
 protected:
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
+
+    void MovePlayerToMousePosition();
 
 private:
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<APlayerCharacter> PlayerCharacterClass;
+    UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+    TSubclassOf<APlayerCharacter> PlayerCharacterClass;
 
-	UPROPERTY(VisibleInstanceOnly)
-	APlayerAIController* PlayerAIController;
+    UPROPERTY(VisibleInstanceOnly)
+    APlayerAIController* PlayerAIController;
 
-	UPROPERTY(VisibleInstanceOnly)
-	APlayerCharacter* PlayerCharacter;
+    UPROPERTY(VisibleInstanceOnly)
+    APlayerCharacter* PlayerCharacter;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	float AcceptanceRadius;
+    UFUNCTION()
+    void OnLeftMouseButtonPressed();
 
-	UFUNCTION()
-	void OnLeftMouseButtonClicked();
+    UFUNCTION()
+    void OnLeftMouseButtonReleased();
 
-	UFUNCTION()
-	void OnRightMouseButtonClicked();
+    UFUNCTION()
+    void OnRightMouseButtonClicked();
+
+    bool bLMBDown;
 };

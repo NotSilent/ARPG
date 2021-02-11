@@ -3,73 +3,77 @@
 
 #include "TopDownPlayerController.h"
 
-#include "AIController.h"
 #include "DrawDebugHelpers.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 ATopDownPlayerController::ATopDownPlayerController()
 {
-	AcceptanceRadius = 0.5f;
+    PrimaryActorTick.bCanEverTick = true;
+}
+
+void ATopDownPlayerController::Tick(float DeltaTime)
+{
+    if (bLMBDown)
+    {
+        MovePlayerToMousePosition();
+    }
 }
 
 void ATopDownPlayerController::SetupInputComponent()
 {
-	Super::SetupInputComponent();
+    Super::SetupInputComponent();
 
-	InputComponent->BindAction("LMB", IE_Pressed, this, &ATopDownPlayerController::OnLeftMouseButtonClicked);
-	InputComponent->BindAction("RMB", IE_Pressed, this, &ATopDownPlayerController::OnRightMouseButtonClicked);
+    InputComponent->BindAction("LMB", IE_Pressed, this, &ATopDownPlayerController::OnLeftMouseButtonPressed);
+    InputComponent->BindAction("LMB", IE_Released, this, &ATopDownPlayerController::OnLeftMouseButtonReleased);
+
+    InputComponent->BindAction("RMB", IE_Pressed, this, &ATopDownPlayerController::OnRightMouseButtonClicked);
 }
 
 void ATopDownPlayerController::BeginPlay()
 {
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	PlayerCharacter = GetWorld()->SpawnActor<APlayerCharacter>(
-		PlayerCharacterClass, FVector(0.0f, 0.0f, 112.0f), FRotator::ZeroRotator, SpawnParams);
+    PlayerCharacter = GetWorld()->SpawnActor<APlayerCharacter>(
+        PlayerCharacterClass, FVector(0.0f, 0.0f, 112.0f), FRotator::ZeroRotator, SpawnParams);
 
-	if (PlayerCharacter)
-	{
-		PlayerAIController = PlayerCharacter->GetAIController();
-	}
+    if (PlayerCharacter)
+    {
+        PlayerAIController = PlayerCharacter->GetAIController();
+    }
 
-	SetViewTarget(PlayerCharacter);
+    SetViewTarget(PlayerCharacter);
 }
 
-
-void ATopDownPlayerController::OnLeftMouseButtonClicked()
+void ATopDownPlayerController::MovePlayerToMousePosition()
 {
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+    FHitResult Hit;
+    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	if (Hit.bBlockingHit)
-	{
-		APawn* const MyPawn = PlayerAIController->GetPawn();
-		if (MyPawn)
-		{
-			float const Distance = FVector::Dist(Hit.ImpactPoint, MyPawn->GetActorLocation());
+    if (Hit.bBlockingHit && PlayerAIController)
+    {
+        PlayerAIController->Move(Hit.ImpactPoint);
+    }
+}
 
-			if (Distance > 100.0f)
-			{
-				if (PlayerAIController)
-				{
-					PlayerAIController->Move(Hit.ImpactPoint, AcceptanceRadius);
-				}
+void ATopDownPlayerController::OnLeftMouseButtonPressed()
+{
+    bLMBDown = true;
+}
 
-				DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 5.0f, 8, FColor::Red, false, 5.0f, 0, 1.0f);
-			}
-		}
-	}
+void ATopDownPlayerController::OnLeftMouseButtonReleased()
+{
+    bLMBDown = false;
 }
 
 void ATopDownPlayerController::OnRightMouseButtonClicked()
 {
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+    FHitResult Hit;
+    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	if (Hit.bBlockingHit)
-	{
-		PlayerCharacter->InitSpell(this, Hit.ImpactPoint);
-	}
+    if (Hit.bBlockingHit)
+    {
+        PlayerAIController->CastSpell(Hit.ImpactPoint);
+    }
 }
