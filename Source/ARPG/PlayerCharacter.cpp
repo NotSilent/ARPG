@@ -12,7 +12,6 @@
 #include "Niagara/Public/NiagaraFunctionLibrary.h"
 #include "PlayerAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardData.h"
 
 APlayerCharacter::APlayerCharacter()
 {

@@ -14,17 +14,19 @@ class ARPG_API UHealthComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this component's properties
 	UHealthComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthReachedZero OnHealthReachedZero;
 
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	UFUNCTION(BlueprintCallable)
+	float AddHealth(float Value);
+
+	UFUNCTION(BlueprintCallable)
+	float RemoveHealth(float Value);
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -37,11 +39,4 @@ private:
 	bool bHealthReachedZero;
 
 	float ModifyHealth(float Value);
-
-public:
-	FOnHealthReachedZero OnHealthReachedZero;
-
-	float AddHealth(float Value);
-
-	float RemoveHealth(float Value);
 };
