@@ -8,6 +8,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthReachedZero);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, PercentValue, float, Value);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARPG_API UHealthComponent : public UActorComponent
 {
@@ -18,6 +20,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthReachedZero OnHealthReachedZero;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable)
 	float AddHealth(float Value);

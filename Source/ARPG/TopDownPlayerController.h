@@ -7,6 +7,8 @@
 #include "PlayerAIController.h"
 #include "PlayerCharacter.h"
 #include "GameFramework/PlayerController.h"
+#include "PlayerHUD.h"
+
 #include "TopDownPlayerController.generated.h"
 
 /**
@@ -15,38 +17,47 @@
 UCLASS()
 class ARPG_API ATopDownPlayerController : public APlayerController
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public :
-    ATopDownPlayerController();
+	ATopDownPlayerController();
 
-    virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaTime) override;
 
-    virtual void SetupInputComponent() override;
+	virtual void SetupInputComponent() override;
 
 protected:
-    virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
-    void MovePlayerToMousePosition();
+	void MovePlayerToMousePosition();
 
 private:
-    UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-    TSubclassOf<APlayerCharacter> PlayerCharacterClass;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<APlayerCharacter> PlayerCharacterClass;
 
-    UPROPERTY(VisibleInstanceOnly)
-    APlayerAIController* PlayerAIController;
+	UPROPERTY(VisibleInstanceOnly)
+	APlayerAIController* PlayerAIController;
 
-    UPROPERTY(VisibleInstanceOnly)
-    APlayerCharacter* PlayerCharacter;
+	UPROPERTY(VisibleInstanceOnly)
+	APlayerCharacter* PlayerCharacter;
 
-    UFUNCTION()
-    void OnLeftMouseButtonPressed();
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPlayerHUD> PlayerWidgetClass;
 
-    UFUNCTION()
-    void OnLeftMouseButtonReleased();
+	UPROPERTY(VisibleInstanceOnly)
+	UPlayerHUD* PlayerWidget;
 
-    UFUNCTION()
-    void OnRightMouseButtonClicked();
+	UFUNCTION()
+	void OnLeftMouseButtonPressed();
 
-    bool bLMBDown;
+	UFUNCTION()
+	void OnLeftMouseButtonReleased();
+
+	UFUNCTION()
+	void OnRightMouseButtonClicked();
+
+	UFUNCTION()
+	void OnPlayerHealthChanged(float PercentValue, float Value);
+
+	bool bLMBDown;
 };

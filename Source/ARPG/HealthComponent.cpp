@@ -28,6 +28,8 @@ float UHealthComponent::ModifyHealth(float Value)
 
 	CurrentHealth += Value;
 
+	OnHealthChanged.Broadcast(CurrentHealth / MaxHealth, CurrentHealth);
+
 	if (CurrentHealth <= 0.0f)
 	{
 		bHealthReachedZero = true;

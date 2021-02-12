@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "HealthComponent.h"
 
 ATopDownPlayerController::ATopDownPlayerController()
 {
@@ -41,7 +42,12 @@ void ATopDownPlayerController::BeginPlay()
 	if (PlayerCharacter)
 	{
 		PlayerAIController = PlayerCharacter->GetAIController();
+		PlayerCharacter->HealthComp->OnHealthChanged.
+		                 AddDynamic(this, &ATopDownPlayerController::OnPlayerHealthChanged);
 	}
+
+	PlayerWidget = CreateWidget<UPlayerHUD>(this, PlayerWidgetClass);
+	PlayerWidget->AddToViewport();
 
 	SetViewTarget(PlayerCharacter);
 }
@@ -76,4 +82,9 @@ void ATopDownPlayerController::OnRightMouseButtonClicked()
 	{
 		PlayerAIController->InitSpell(Hit.ImpactPoint);
 	}
+}
+
+void ATopDownPlayerController::OnPlayerHealthChanged(float PercentValue, float Value)
+{
+	PlayerWidget->SetTargetHealthValue(PercentValue);
 }
