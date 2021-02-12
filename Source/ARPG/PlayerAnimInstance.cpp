@@ -17,3 +17,8 @@ void UPlayerAnimInstance::BroadcastOnStartCast()
 {
 	OnStartCast.Broadcast();
 }
+
+void UPlayerAnimInstance::BroadcastOnEndCast()
+{
+	OnEndCast.Broadcast();
+}

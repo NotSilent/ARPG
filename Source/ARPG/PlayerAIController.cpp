@@ -7,42 +7,53 @@
 
 void APlayerAIController::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    RunBehaviorTree(BehaviourTree);
+	RunBehaviorTree(BehaviourTree);
 }
 
 void APlayerAIController::OnPossess(APawn* InPawn)
 {
-    Super::OnPossess(InPawn);
+	Super::OnPossess(InPawn);
 
-    PlayerCharacter = GetPawn<APlayerCharacter>();
+	PlayerCharacter = GetPawn<APlayerCharacter>();
 }
 
 void APlayerAIController::Move(const FVector& Destination)
 {
-    if (PlayerCharacter)
-    {
-        const FVector Direction = Destination - PlayerCharacter->GetActorLocation();
-        FRotator Rotation = Direction.Rotation();
-        Rotation.Pitch = 0.0f;
-        Rotation.Roll = 0.0f;
-        GetBlackboardComponent()->SetValueAsRotator(FName(TEXT("Rotation")), Rotation);
-        GetBlackboardComponent()->SetValueAsVector(FName(TEXT("Destination")), Destination);
-    }
+	if (PlayerCharacter)
+	{
+		const FVector Direction = Destination - PlayerCharacter->GetActorLocation();
+		FRotator Rotation = Direction.Rotation();
+		Rotation.Pitch = 0.0f;
+		Rotation.Roll = 0.0f;
+		GetBlackboardComponent()->SetValueAsRotator(FName(TEXT("Rotation")), Rotation);
+		GetBlackboardComponent()->SetValueAsVector(FName(TEXT("Destination")), Destination);
+		GetBlackboardComponent()->ClearValue(FName(TEXT("SpellDestination")));
+	}
 }
 
-void APlayerAIController::CastSpell(const FVector& Destination)
+void APlayerAIController::InitSpell(const FVector& Destination)
 {
-    if (PlayerCharacter)
-    {
-        const FVector Direction = Destination - PlayerCharacter->GetActorLocation();
-        FRotator Rotation = Direction.Rotation();
-        Rotation.Pitch = 0.0f;
-        Rotation.Roll = 0.0f;
-        GetBlackboardComponent()->SetValueAsRotator(FName(TEXT("Rotation")), Rotation);
-        GetBlackboardComponent()->SetValueAsVector(FName(TEXT("Destination")), PlayerCharacter->GetActorLocation());
+	if (PlayerCharacter)
+	{
+		const FVector Direction = Destination - PlayerCharacter->GetActorLocation();
+		FRotator Rotation = Direction.Rotation();
+		Rotation.Pitch = 0.0f;
+		Rotation.Roll = 0.0f;
+		GetBlackboardComponent()->ClearValue(FName(TEXT("Destination")));
+		GetBlackboardComponent()->SetValueAsRotator(FName(TEXT("Rotation")), Rotation);
+		GetBlackboardComponent()->
+			SetValueAsVector(FName(TEXT("SpellDestination")), Destination);
+		GetBlackboardComponent()->
+			SetValueAsFloat(FName(TEXT("SpellRadius")), PlayerCharacter->GetEquippedSpellRadius());
 
-        PlayerCharacter->InitSpell(this, Destination);
-    }
+
+		PlayerCharacter->InitSpell(Destination);
+	}
+}
+
+void APlayerAIController::StartCastingSpell()
+{
+	PlayerCharacter->StartCasting();
 }

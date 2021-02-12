@@ -10,6 +10,14 @@ AProjectile::AProjectile()
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Comp");
 	RootComponent = MeshComp;
+
+	Speed = 500.0f;
+	Radius = 500.0f;
+}
+
+float AProjectile::GetRadius() const
+{
+	return Radius;
 }
 
 // Called when the game starts or when spawned

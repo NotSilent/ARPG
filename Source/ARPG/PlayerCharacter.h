@@ -20,62 +20,64 @@ class UHealthComponent;
 UCLASS()
 class ARPG_API APlayerCharacter : public ACharacter
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    APlayerCharacter();
+	APlayerCharacter();
 
-    virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaTime) override;
+
+	float GetEquippedSpellRadius() const;
 
 protected:
-    virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 public:
-    UFUNCTION(BlueprintCallable)
-    void CastSpell();
+	UFUNCTION(BlueprintCallable)
+	void CastSpell();
 
-    APlayerAIController* GetAIController() const;
+	APlayerAIController* GetAIController() const;
 
-    void InitSpell(AController* Creator, const FVector& Destination);
+	void InitSpell(const FVector& Destination);
 
-    void SpawnProjectile(AController* Creator, const FVector& Destination);
+	void StartCasting();
 
-    void SetDestination(const FVector& Destination);
+	void SpawnProjectile(const FVector& Destination);
 
 private:
-    UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-    TSubclassOf<AProjectile> ProjectileClass;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AProjectile> ProjectileClass;
 
-    UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-    USpringArmComponent* SpringArmComp;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* SpringArmComp;
 
-    UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-    UCameraComponent* CameraComp;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* CameraComp;
 
-    UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-    UNiagaraSystem* ForceSystem;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UNiagaraSystem* ForceSystem;
 
-    UPROPERTY(VisibleInstanceOnly)
-    UHealthComponent* HealthComp;
+	UPROPERTY(VisibleInstanceOnly)
+	UHealthComponent* HealthComp;
 
-    UPROPERTY(VisibleInstanceOnly)
-    UPlayerAnimInstance* PlayerAnimInstance;
+	UPROPERTY(VisibleInstanceOnly)
+	UPlayerAnimInstance* PlayerAnimInstance;
 
-    UPROPERTY(VisibleInstanceOnly)
-    FVector PreviousLocation;
+	UPROPERTY(VisibleInstanceOnly)
+	FVector PreviousLocation;
 
-    UPROPERTY(VisibleInstanceOnly)
-    FVector DestinationOfNextSpell;
+	UPROPERTY(VisibleInstanceOnly)
+	FVector DestinationOfNextSpell;
 
-    UPROPERTY(VisibleInstanceOnly)
-    AController* CreatorOfNextSpell;
+	UPROPERTY(VisibleInstanceOnly)
+	AController* CreatorOfNextSpell;
 
-    UPROPERTY(EditDefaultsOnly)
-    UBehaviorTree* BehaviorTree;
+	UPROPERTY(EditDefaultsOnly)
+	UBehaviorTree* BehaviorTree;
 
-    UFUNCTION()
-    void OnDead();
+	UFUNCTION()
+	void OnDead();
 
-    virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-                             class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	                         class AController* EventInstigator, AActor* DamageCauser) override;
 };

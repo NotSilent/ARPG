@@ -15,6 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 
+	float GetRadius() const;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -38,8 +40,11 @@ private:
 	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
 	AController* InstanceCreator;
 
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float Speed;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	float Radius;
 
 	UPROPERTY(VisibleInstanceOnly)
 	FVector MovementDirection;

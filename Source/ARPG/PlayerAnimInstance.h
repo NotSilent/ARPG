@@ -8,6 +8,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartCast);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndCast);
+
 /**
  * 
  */
@@ -18,6 +20,8 @@ class ARPG_API UPlayerAnimInstance : public UAnimInstance
 
 public:
 	FOnStartCast OnStartCast;
+	
+	FOnStartCast OnEndCast;
 
 	void StartCasting();
 
@@ -35,4 +39,7 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void BroadcastOnStartCast();
+
+	UFUNCTION(BlueprintCallable)
+	void BroadcastOnEndCast();
 };
