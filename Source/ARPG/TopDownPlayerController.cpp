@@ -7,6 +7,7 @@
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "HealthComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ATopDownPlayerController::ATopDownPlayerController()
 {
@@ -45,7 +46,7 @@ void ATopDownPlayerController::BeginPlay()
 		PlayerCharacter->HealthComp->OnHealthChanged.
 		                 AddDynamic(this, &ATopDownPlayerController::OnPlayerHealthChanged);
 	}
-
+	
 	PlayerWidget = CreateWidget<UPlayerHUD>(this, PlayerWidgetClass);
 	PlayerWidget->AddToViewport();
 

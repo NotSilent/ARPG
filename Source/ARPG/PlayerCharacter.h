@@ -47,6 +47,9 @@ public:
 	UPROPERTY(VisibleInstanceOnly)
 	UHealthComponent* HealthComp;
 
+	UPROPERTY(VisibleInstanceOnly)
+	UPlayerAnimInstance* PlayerAnimInstance;
+
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectile> ProjectileClass;
@@ -59,9 +62,6 @@ private:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UNiagaraSystem* ForceSystem;
-
-	UPROPERTY(VisibleInstanceOnly)
-	UPlayerAnimInstance* PlayerAnimInstance;
 
 	UPROPERTY(VisibleInstanceOnly)
 	FVector PreviousLocation;

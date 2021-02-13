@@ -17,6 +17,16 @@ void APlayerAIController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 
 	PlayerCharacter = GetPawn<APlayerCharacter>();
+
+	if (PlayerCharacter && PlayerCharacter->PlayerAnimInstance)
+	{
+		PlayerCharacter->PlayerAnimInstance->OnEndCast.AddDynamic(this, &APlayerAIController::OnPlayerStoppedCasting);
+	}
+}
+
+void APlayerAIController::OnPlayerStoppedCasting()
+{
+	GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsCasting")), false);
 }
 
 void APlayerAIController::Move(const FVector& Destination)
@@ -56,4 +66,6 @@ void APlayerAIController::InitSpell(const FVector& Destination)
 void APlayerAIController::StartCastingSpell()
 {
 	PlayerCharacter->StartCasting();
+
+	GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsCasting")), true);
 }

@@ -35,4 +35,7 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
 	APlayerCharacter* PlayerCharacter;
+
+	UFUNCTION()
+	void OnPlayerStoppedCasting();
 };

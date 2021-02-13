@@ -35,16 +35,16 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<APlayerCharacter> PlayerCharacterClass;
 
-	UPROPERTY(VisibleInstanceOnly)
+	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
 	APlayerAIController* PlayerAIController;
 
-	UPROPERTY(VisibleInstanceOnly)
+	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
 	APlayerCharacter* PlayerCharacter;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UPlayerHUD> PlayerWidgetClass;
 
-	UPROPERTY(VisibleInstanceOnly)
+	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
 	UPlayerHUD* PlayerWidget;
 
 	UFUNCTION()
