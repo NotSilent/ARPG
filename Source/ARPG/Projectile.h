@@ -12,29 +12,24 @@ class ARPG_API AProjectile : public AActor
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	AProjectile();
 
-	float GetRadius() const;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 	void Init(const FVector& Direction);
 
+	float GetRadius() const;
+
 protected:
+	virtual void BeginPlay() override;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCollided(FVector Origin);
 
 private:
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
