@@ -12,6 +12,8 @@
 #include "Niagara/Public/NiagaraFunctionLibrary.h"
 #include "PlayerAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -24,6 +26,10 @@ APlayerCharacter::APlayerCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	HealthComp = CreateDefaultSubobject<UHealthComponent>("Health");
+
+	AIPerception = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("AI Perception Stimuli");
+	AIPerception->RegisterForSense(UAISense_Sight::StaticClass());
+	AIPerception->bAutoRegister = true;
 }
 
 void APlayerCharacter::BeginPlay()

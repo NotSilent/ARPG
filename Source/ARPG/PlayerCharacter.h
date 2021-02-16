@@ -10,12 +10,14 @@
 #include "Projectile.h"
 #include "GameFramework/Character.h"
 
+
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UNiagaraSystem;
 class UHealthComponent;
+class UAIPerceptionStimuliSourceComponent;
 
 UCLASS()
 class ARPG_API APlayerCharacter : public ACharacter
@@ -74,6 +76,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAIPerceptionStimuliSourceComponent* AIPerception;
 
 	UFUNCTION()
 	void OnDead();
