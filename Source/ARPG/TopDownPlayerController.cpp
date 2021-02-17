@@ -7,11 +7,14 @@
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "HealthComponent.h"
+#include "PlayerSaveGame.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 ATopDownPlayerController::ATopDownPlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	SaveInterval = 5.0f;
 }
 
 void ATopDownPlayerController::Tick(float DeltaTime)
@@ -45,12 +48,23 @@ void ATopDownPlayerController::BeginPlay()
 		PlayerAIController = PlayerCharacter->GetAIController();
 		PlayerCharacter->HealthComp->OnHealthChanged.
 		                 AddDynamic(this, &ATopDownPlayerController::OnPlayerHealthChanged);
+
+		const FString SlotName = UPlayerSaveGame::StaticClass()->GetFName().ToString();
+
+		if (UPlayerSaveGame* Save = Cast<UPlayerSaveGame>(
+			UGameplayStatics::LoadGameFromSlot(SlotName, 0)))
+		{
+			PlayerCharacter->SetActorLocation(Save->LastPlayerLocation);
+		}
 	}
-	
+
 	PlayerWidget = CreateWidget<UPlayerHUD>(this, PlayerWidgetClass);
 	PlayerWidget->AddToViewport();
 
 	SetViewTarget(PlayerCharacter);
+
+	GetWorldTimerManager().SetTimer(SaveTimerHandle, this, &ATopDownPlayerController::Save, SaveInterval, true,
+	                                SaveInterval);
 }
 
 void ATopDownPlayerController::MovePlayerToMousePosition()
@@ -88,4 +102,18 @@ void ATopDownPlayerController::OnRightMouseButtonClicked()
 void ATopDownPlayerController::OnPlayerHealthChanged(float PercentValue, float Value)
 {
 	PlayerWidget->SetTargetHealthValue(PercentValue);
+}
+
+void ATopDownPlayerController::Save()
+{
+	UPlayerSaveGame* Save = Cast<UPlayerSaveGame>(
+		UGameplayStatics::CreateSaveGameObject(UPlayerSaveGame::StaticClass()));
+	if (Save)
+	{
+		const FString SlotName = UPlayerSaveGame::StaticClass()->GetFName().ToString();
+
+		Save->LastPlayerLocation = PlayerCharacter->GetActorLocation();
+
+		UGameplayStatics::AsyncSaveGameToSlot(Save, SlotName, 0);
+	}
 }

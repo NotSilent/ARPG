@@ -47,6 +47,12 @@ private:
 	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
 	UPlayerHUD* PlayerWidget;
 
+	UPROPERTY()
+	FTimerHandle SaveTimerHandle;
+
+	UPROPERTY(EditDefaultsOnly)
+	float SaveInterval;
+
 	UFUNCTION()
 	void OnLeftMouseButtonPressed();
 
@@ -58,6 +64,9 @@ private:
 
 	UFUNCTION()
 	void OnPlayerHealthChanged(float PercentValue, float Value);
+
+	UFUNCTION()
+	void Save();
 
 	bool bLMBDown;
 };
