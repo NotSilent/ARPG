@@ -6,7 +6,6 @@
 
 
 #include "PlayerAIController.h"
-#include "PlayerAnimInstance.h"
 #include "Projectile.h"
 #include "GameFramework/Character.h"
 
@@ -18,6 +17,7 @@ class UCameraComponent;
 class UNiagaraSystem;
 class UHealthComponent;
 class UAIPerceptionStimuliSourceComponent;
+class UHumanoidAnimInstance;
 
 UCLASS()
 class ARPG_API APlayerCharacter : public ACharacter
@@ -26,8 +26,6 @@ class ARPG_API APlayerCharacter : public ACharacter
 
 public:
 	APlayerCharacter();
-
-	virtual void Tick(float DeltaTime) override;
 
 	float GetEquippedSpellRadius() const;
 
@@ -50,7 +48,7 @@ public:
 	UHealthComponent* HealthComp;
 
 	UPROPERTY(VisibleInstanceOnly)
-	UPlayerAnimInstance* PlayerAnimInstance;
+	UHumanoidAnimInstance* HumanoidAnimInstance;
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
@@ -64,9 +62,6 @@ private:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UNiagaraSystem* ForceSystem;
-
-	UPROPERTY(VisibleInstanceOnly)
-	FVector PreviousLocation;
 
 	UPROPERTY(VisibleInstanceOnly)
 	FVector DestinationOfNextSpell;

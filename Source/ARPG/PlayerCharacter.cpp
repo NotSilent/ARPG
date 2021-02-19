@@ -14,10 +14,11 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "HumanoidAnimInstance.h"
 
 APlayerCharacter::APlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("Spring Arm");
 	SpringArmComp->SetupAttachment(RootComponent);
@@ -44,18 +45,16 @@ void APlayerCharacter::BeginPlay()
 		                                             FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
 	}
 
-	PreviousLocation = GetActorLocation();
-
 	HealthComp = FindComponentByClass<UHealthComponent>();
 	if (HealthComp)
 	{
 		HealthComp->OnHealthReachedZero.AddDynamic(this, &APlayerCharacter::OnDead);
 	}
 
-	PlayerAnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	if (PlayerAnimInstance)
+	HumanoidAnimInstance = Cast<UHumanoidAnimInstance>(GetMesh()->GetAnimInstance());
+	if (HumanoidAnimInstance)
 	{
-		PlayerAnimInstance->OnStartCast.AddDynamic(this, &APlayerCharacter::CastSpell);
+		HumanoidAnimInstance->OnStartSpellCast.AddDynamic(this, &APlayerCharacter::CastSpell);
 	}
 
 	SpawnDefaultController();
@@ -78,7 +77,7 @@ void APlayerCharacter::InitSpell(const FVector& Destination)
 
 void APlayerCharacter::StartCasting()
 {
-	PlayerAnimInstance->StartCasting();
+	HumanoidAnimInstance->SetAnimationState(EAnimationState::SPELL_CAST);
 }
 
 void APlayerCharacter::SpawnProjectile(const FVector& Destination)
@@ -101,25 +100,6 @@ void APlayerCharacter::SpawnProjectile(const FVector& Destination)
 	{
 		Direction.Normalize();
 		Projectile->Init(Direction);
-	}
-}
-
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if (PlayerAnimInstance)
-	{
-		if (FMath::IsNearlyZero(FVector::Distance(PreviousLocation, GetActorLocation())))
-		{
-			PlayerAnimInstance->SetSpeed(0.0f);
-		}
-		else
-		{
-			PlayerAnimInstance->SetSpeed(1.0f);
-		}
-
-		PreviousLocation = GetActorLocation();
 	}
 }
 

@@ -13,14 +13,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndCast);
 /**
  * 
  */
-UCLASS()
+UCLASS(Deprecated)
 class ARPG_API UPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
 	FOnStartCast OnStartCast;
-	
+
 	FOnStartCast OnEndCast;
 
 	void StartCasting();
@@ -30,9 +30,6 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bIsCasting;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	float TurnAngle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float Speed;

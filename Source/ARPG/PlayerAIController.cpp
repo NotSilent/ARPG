@@ -2,6 +2,8 @@
 
 
 #include "PlayerAIController.h"
+
+#include "HumanoidAnimInstance.h"
 #include "PlayerCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -18,9 +20,10 @@ void APlayerAIController::OnPossess(APawn* InPawn)
 
 	PlayerCharacter = GetPawn<APlayerCharacter>();
 
-	if (PlayerCharacter && PlayerCharacter->PlayerAnimInstance)
+	if (PlayerCharacter && PlayerCharacter->HumanoidAnimInstance)
 	{
-		PlayerCharacter->PlayerAnimInstance->OnEndCast.AddDynamic(this, &APlayerAIController::OnPlayerStoppedCasting);
+		PlayerCharacter->HumanoidAnimInstance->OnEndSpellCast.AddDynamic(
+			this, &APlayerAIController::OnPlayerStoppedCasting);
 	}
 }
 
