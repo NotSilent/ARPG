@@ -37,11 +37,22 @@ class ARPG_API UHumanoidAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable)
 	FOnStartMeleeAttack OnStartMeleeAttack;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnEndMeleeAttack OnEndMeleeAttack;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnStartRangedAttack OnStartRangedAttack;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnEndRangedAttack OnEndRangedAttack;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnStartSpellCast OnStartSpellCast;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnEndSpellCast OnEndSpellCast;
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

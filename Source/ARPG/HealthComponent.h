@@ -34,7 +34,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MaxHealth;
 
 	UPROPERTY(VisibleInstanceOnly)
