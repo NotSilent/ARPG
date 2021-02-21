@@ -35,8 +35,10 @@ public:
 
 	void PrepareWeapon(const FWeaponUseProperties& Properties);
 
+	UFUNCTION(BlueprintCallable)
 	virtual void StartWeapon();
 
+	UFUNCTION(BlueprintCallable)
 	virtual void StopWeapon();
 
 	UFUNCTION(BlueprintCallable)
