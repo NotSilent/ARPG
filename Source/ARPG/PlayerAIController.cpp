@@ -62,13 +62,13 @@ void APlayerAIController::InitSpell(const FVector& Destination)
 			SetValueAsFloat(FName(TEXT("SpellRadius")), PlayerCharacter->GetEquippedSpellRadius());
 
 
-		PlayerCharacter->InitSpell(Destination);
+		PlayerCharacter->PrepareWeapon(Destination);
 	}
 }
 
 void APlayerAIController::StartCastingSpell()
 {
-	PlayerCharacter->StartCasting();
+	PlayerCharacter->StartWeaponAnimation();
 
 	GetBlackboardComponent()->SetValueAsBool(FName(TEXT("IsCasting")), true);
 }

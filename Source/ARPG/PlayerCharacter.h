@@ -12,6 +12,7 @@
 
 #include "PlayerCharacter.generated.h"
 
+class AWeapon;
 class USpringArmComponent;
 class UCameraComponent;
 class UNiagaraSystem;
@@ -33,16 +34,14 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void CastSpell();
-
 	APlayerAIController* GetAIController() const;
 
-	void InitSpell(const FVector& Destination);
+	UFUNCTION(BlueprintCallable)
+	void StartWeapon();
 
-	void StartCasting();
+	void PrepareWeapon(const FVector& Destination);
 
-	void SpawnProjectile(const FVector& Destination);
+	void StartWeaponAnimation();
 
 	UPROPERTY(VisibleInstanceOnly)
 	UHealthComponent* HealthComp;
@@ -52,22 +51,16 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AProjectile> ProjectileClass;
+	TSubclassOf<AWeapon> WeaponClass;
+
+	UPROPERTY(VisibleInstanceOnly, meta = (AllowPrivateAccess = "true"))
+	AWeapon* EquippedWeapon;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComp;
-
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	UNiagaraSystem* ForceSystem;
-
-	UPROPERTY(VisibleInstanceOnly)
-	FVector DestinationOfNextSpell;
-
-	UPROPERTY(VisibleInstanceOnly)
-	AController* CreatorOfNextSpell;
 
 	UPROPERTY(EditDefaultsOnly)
 	UBehaviorTree* BehaviorTree;

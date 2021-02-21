@@ -15,6 +15,8 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
 #include "HumanoidAnimInstance.h"
+#include "Weapon.h"
+#include "Engine/SkeletalMeshSocket.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -37,12 +39,21 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const USkeletalMeshComponent* MeshComp = GetMesh();
+	USkeletalMeshComponent* MeshComp = GetMesh();
 	const FName SocketName = TEXT("RightHandSocket");
 	if (MeshComp && MeshComp->DoesSocketExist(SocketName))
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAttached(ForceSystem, GetMesh(), SocketName, FVector::ZeroVector,
-		                                             FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
+		const USkeletalMeshSocket* Socket = MeshComp->GetSocketByName(SocketName);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		EquippedWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass, MeshComp->GetSocketLocation(SocketName),
+		                                                 FRotator::ZeroRotator, SpawnParams);
+
+		const FAttachmentTransformRules Rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
+		                                      EAttachmentRule::SnapToTarget, true);
+		EquippedWeapon->AttachToComponent(MeshComp, Rules, SocketName);
+		// Socket->AttachActor(EquippedWeapon, MeshComp);
+		// EquippedWeapon->SetActorLocation(FVector::ZeroVector);
 	}
 
 	HealthComp = FindComponentByClass<UHealthComponent>();
@@ -54,7 +65,7 @@ void APlayerCharacter::BeginPlay()
 	HumanoidAnimInstance = Cast<UHumanoidAnimInstance>(GetMesh()->GetAnimInstance());
 	if (HumanoidAnimInstance)
 	{
-		HumanoidAnimInstance->OnStartSpellCast.AddDynamic(this, &APlayerCharacter::CastSpell);
+		HumanoidAnimInstance->OnStartSpellCast.AddDynamic(this, &APlayerCharacter::StartWeapon);
 	}
 
 	SpawnDefaultController();
@@ -65,47 +76,42 @@ APlayerAIController* APlayerCharacter::GetAIController() const
 	return Cast<APlayerAIController>(Controller);
 }
 
-void APlayerCharacter::CastSpell()
+void APlayerCharacter::StartWeapon()
 {
-	SpawnProjectile(DestinationOfNextSpell);
-}
-
-void APlayerCharacter::InitSpell(const FVector& Destination)
-{
-	DestinationOfNextSpell = Destination;
-}
-
-void APlayerCharacter::StartCasting()
-{
-	HumanoidAnimInstance->SetAnimationState(EAnimationState::SPELL_CAST);
-}
-
-void APlayerCharacter::SpawnProjectile(const FVector& Destination)
-{
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-	SpawnParams.Owner = this;
-
-	USkeletalMeshComponent* MeshComp = GetMesh();
-	const FName SocketName = TEXT("RightHandSocket");
-	const FVector SocketLocation = MeshComp->GetSocketLocation(SocketName);
-
-	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SocketLocation,
-	                                                              FRotator::ZeroRotator, SpawnParams);
-
-	FVector Direction = Destination - SocketLocation;
-
-	if (Projectile)
+	if (EquippedWeapon)
 	{
-		Direction.Normalize();
-		Projectile->Init(Direction);
+		EquippedWeapon->StartWeapon();
+	}
+}
+
+void APlayerCharacter::PrepareWeapon(const FVector& Destination)
+{
+	if (EquippedWeapon)
+	{
+		FWeaponUseProperties Properties;
+		Properties.Destination = Destination;
+		Properties.Owner = Controller;
+		EquippedWeapon->PrepareWeapon(Properties);
+	}
+}
+
+void APlayerCharacter::StartWeaponAnimation()
+{
+	if (EquippedWeapon)
+	{
+		const EAnimationState State = EquippedWeapon->GetAnimationState();
+		HumanoidAnimInstance->SetAnimationState(State);
 	}
 }
 
 float APlayerCharacter::GetEquippedSpellRadius() const
 {
-	return ProjectileClass->GetDefaultObject<AProjectile>()->GetRadius();
+	if (EquippedWeapon)
+	{
+		return EquippedWeapon->GetRange();
+	}
+
+	return TNumericLimits<float>::Max();
 }
 
 void APlayerCharacter::OnDead()

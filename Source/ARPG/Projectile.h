@@ -18,6 +18,7 @@ public:
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
+	UFUNCTION(BlueprintCallable)
 	void Init(const FVector& Direction);
 
 	float GetRadius() const;
