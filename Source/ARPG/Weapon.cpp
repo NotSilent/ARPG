@@ -26,7 +26,9 @@ void AWeapon::BeginPlay()
 			NiagaraSystem, MeshComp, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator,
 			EAttachLocation::SnapToTargetIncludingScale, false, true);
 
-		NiagaraComponent->SetupAttachment(RootComponent);
+		const FAttachmentTransformRules Rules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
+		                                      EAttachmentRule::SnapToTarget, true);
+		NiagaraComponent->AttachToComponent(RootComponent, Rules, NAME_None);
 	}
 }
 
